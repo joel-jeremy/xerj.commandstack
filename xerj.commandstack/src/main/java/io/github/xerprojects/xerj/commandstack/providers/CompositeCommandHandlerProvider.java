@@ -20,12 +20,12 @@ public class CompositeCommandHandlerProvider implements CommandHandlerProvider {
 		if (providers == null) {
 			throw new IllegalArgumentException("Providers must not be null.");
 		}
+
+		if (!providers.iterator().hasNext()){
+			throw new IllegalArgumentException("Providers list must not be empty.");
+		}
 		
 		providers.forEach(this.providers::add);
-
-		if (this.providers.size() == 0) {
-			throw new IllegalArgumentException("Providers must not be empty.");
-		}
 	}
 	
 	@Override
