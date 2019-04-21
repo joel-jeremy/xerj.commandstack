@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import io.github.xerprojects.xerj.commandstack.Command;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 
-public class BaseCommandHandler<TCommand extends Command> implements CommandHandler<TCommand> {
+public abstract class BaseCommandHandler<TCommand extends Command> implements CommandHandler<TCommand> {
 	private static final CompletableFuture<Void> COMPLETED_FUTURE = CompletableFuture.completedFuture(null);
 	private ArrayList<TCommand> handledCommands = new ArrayList<>();
 	
