@@ -1,10 +1,7 @@
 package io.github.xerprojects.xerj.commandstack.providers;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import io.github.xerprojects.xerj.commandstack.Command;
@@ -35,8 +32,7 @@ public class RegistryCommandHandlerProvider implements CommandHandlerProvider {
 		}
 
 		@SuppressWarnings("unchecked")
-		RegisteredCommandHandler<TCommand> registered = 
-			(RegisteredCommandHandler<TCommand>) registry.get(commandType);
+		RegisteredCommandHandler<TCommand> registered = (RegisteredCommandHandler<TCommand>) registry.get(commandType);
 
 		if (registered == null) {
 			return Optional.empty();
@@ -55,9 +51,11 @@ public class RegistryCommandHandlerProvider implements CommandHandlerProvider {
 		CommandHandler<TCommand> getInstance();
 	}
 
-	private static final class MapRegistry implements Registry, Map<Class<? extends Command>, RegisteredCommandHandler<? extends Command>> {
-		private final LinkedHashMap<Class<? extends Command>, RegisteredCommandHandler<? extends Command>> registeredCommandHandlersByType 
-			= new LinkedHashMap<>();
+	private static final class MapRegistry 
+			extends HashMap<Class<? extends Command>, RegisteredCommandHandler<? extends Command>>
+			implements Registry {
+
+		private static final long serialVersionUID = 7167121127221962355L;
 
 		@Override
 		public <TCommand extends Command> Registry registerCommandHandler(
@@ -72,77 +70,13 @@ public class RegistryCommandHandlerProvider implements CommandHandlerProvider {
 				throw new IllegalArgumentException("Instance factory must not be null.");
 			}
 
-			if (registeredCommandHandlersByType.containsKey(commandType)) {
+			if (containsKey(commandType)) {
 				throw new DuplicateCommandHandlerRegistrationException(commandType);
 			}
 
-			registeredCommandHandlersByType.put(commandType,
-					new RegisteredCommandHandler<>(commandType, instanceFactory));
+			put(commandType, new RegisteredCommandHandler<>(commandType, instanceFactory));
 
 			return this;
-		}
-
-		@Override
-		public int size() {
-			return registeredCommandHandlersByType.size();
-		}
-
-		@Override
-		public boolean isEmpty() {
-			return registeredCommandHandlersByType.isEmpty();
-		}
-
-		@Override
-		public boolean containsKey(Object key) {
-			return registeredCommandHandlersByType.containsKey(key);
-		}
-
-		@Override
-		public boolean containsValue(Object value) {
-			return registeredCommandHandlersByType.containsValue(value);
-		}
-
-		@Override
-		public RegisteredCommandHandler<? extends Command> get(Object key) {
-			return registeredCommandHandlersByType.get(key);
-		}
-
-		@Override
-		public RegisteredCommandHandler<? extends Command> put(
-				Class<? extends Command> key,
-				RegisteredCommandHandler<? extends Command> value) {
-			return registeredCommandHandlersByType.put(key, value);
-		}
-
-		@Override
-		public RegisteredCommandHandler<? extends Command> remove(Object key) {
-			return registeredCommandHandlersByType.remove(key);
-		}
-
-		@Override
-		public void putAll(
-				Map<? extends Class<? extends Command>, ? extends RegisteredCommandHandler<? extends Command>> all) {
-			registeredCommandHandlersByType.putAll(all);
-		}
-
-		@Override
-		public void clear() {
-			registeredCommandHandlersByType.clear();
-		}
-
-		@Override
-		public Set<Class<? extends Command>> keySet() {
-			return registeredCommandHandlersByType.keySet();
-		}
-
-		@Override
-		public Collection<RegisteredCommandHandler<? extends Command>> values() {
-			return registeredCommandHandlersByType.values();
-		}
-
-		@Override
-		public Set<Entry<Class<? extends Command>, RegisteredCommandHandler<? extends Command>>> entrySet() {
-			return registeredCommandHandlersByType.entrySet();
 		}
 	}
 	
