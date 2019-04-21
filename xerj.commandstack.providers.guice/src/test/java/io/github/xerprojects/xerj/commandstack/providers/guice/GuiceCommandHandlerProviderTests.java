@@ -21,7 +21,7 @@ public class GuiceCommandHandlerProviderTests {
 	@Nested
 	public class Constructor {
 		@Test
-		public void shouldThrowWhenContainerAdapterArgumentIsNull() {
+		public void shouldThrowWhenInjectorArgumentIsNull() {
 			assertThrows(IllegalArgumentException.class, () -> {
 				new GuiceCommandHandlerProvider(null);
 			});
@@ -32,7 +32,7 @@ public class GuiceCommandHandlerProviderTests {
 	public class GetCommandHandlerForMethod {
 
 		@Test
-		public void shouldProvideCommandHandlerFromContainer() {
+		public void shouldProvideCommandHandlerFromInjector() {
 			Injector injector = Guice.createInjector(new AppModule());
 			var provider = new GuiceCommandHandlerProvider(injector);
 			Optional<CommandHandler<TestCommand>> resolvedHandler = provider.getCommandHandlerFor(TestCommand.class);
