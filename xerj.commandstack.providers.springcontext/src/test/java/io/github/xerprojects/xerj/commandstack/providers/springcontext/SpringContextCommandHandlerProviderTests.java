@@ -11,9 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
-import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.AppContextConfig;
+import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.TestCommand;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.TestCommandHandler;
+import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.AppContextConfig;
+import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.DuplicateHandlerConfig;
+import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.NullConfig;
 
 public class SpringContextCommandHandlerProviderTests {
 	@Nested
@@ -47,6 +50,25 @@ public class SpringContextCommandHandlerProviderTests {
 				var provider = new SpringContextCommandHandlerProvider(appContext);
 				provider.getCommandHandlerFor(null);
 			});
+		}
+		
+		@Test
+		public void shouldThrowWhenDuplicateCommandHandlerIsFound() {
+			assertThrows(DuplicateCommandHandlerFoundException.class, () -> {
+				var appContext = new AnnotationConfigApplicationContext(DuplicateHandlerConfig.class);
+				var provider = new SpringContextCommandHandlerProvider(appContext);
+				provider.getCommandHandlerFor(TestCommand.class);
+			});
+		}
+
+		@Test
+		public void shouldReturnEmptyOptionalIfNoCommandHandlerIsFound() {
+			var appContext = new AnnotationConfigApplicationContext(NullConfig.class);
+			var provider = new SpringContextCommandHandlerProvider(appContext);
+			Optional<CommandHandler<TestCommand>> resolvedHandler = provider.getCommandHandlerFor(TestCommand.class);
+						
+			assertNotNull(resolvedHandler);
+			assertTrue(!resolvedHandler.isPresent());
 		}
 	}
 }
