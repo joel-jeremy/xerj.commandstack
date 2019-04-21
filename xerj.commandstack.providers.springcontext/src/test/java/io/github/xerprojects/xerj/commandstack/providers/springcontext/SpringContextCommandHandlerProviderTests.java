@@ -19,7 +19,7 @@ public class SpringContextCommandHandlerProviderTests {
 	@Nested
 	public class Constructor {
 		@Test
-		public void shouldThrowWhenContainerAdapterArgumentIsNull() {
+		public void shouldThrowWhenApplicationContextArgumentIsNull() {
 			assertThrows(IllegalArgumentException.class, () -> {
 				new SpringContextCommandHandlerProvider(null);
 			});
@@ -29,7 +29,7 @@ public class SpringContextCommandHandlerProviderTests {
 	@Nested
 	public class GetCommandHandlerForMethod {
 		@Test
-		public void shouldProvideCommandHandlerFromContainer() {
+		public void shouldProvideCommandHandlerFromApplicationContext() {
 			var appContext = new AnnotationConfigApplicationContext(AppContextConfig.class);
 			var provider = new SpringContextCommandHandlerProvider(appContext);
 			Optional<CommandHandler<TestCommand>> resolvedHandler = provider.getCommandHandlerFor(TestCommand.class);
