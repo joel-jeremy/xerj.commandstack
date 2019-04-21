@@ -14,7 +14,7 @@ import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.TestCommand;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.TestCommandHandler;
-import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.AppContextConfig;
+import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.BeanConfig;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.DuplicateHandlerConfig;
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.springconfigs.NullConfig;
 
@@ -33,7 +33,7 @@ public class SpringContextCommandHandlerProviderTests {
 	public class GetCommandHandlerForMethod {
 		@Test
 		public void shouldProvideCommandHandlerFromApplicationContext() {
-			var appContext = new AnnotationConfigApplicationContext(AppContextConfig.class);
+			var appContext = new AnnotationConfigApplicationContext(BeanConfig.class);
 			var provider = new SpringContextCommandHandlerProvider(appContext);
 			Optional<CommandHandler<TestCommand>> resolvedHandler = provider.getCommandHandlerFor(TestCommand.class);
 			
@@ -46,7 +46,7 @@ public class SpringContextCommandHandlerProviderTests {
 		@Test
 		public void shouldThrowWhenCommandClassArgumentIsNull() {
 			assertThrows(IllegalArgumentException.class, () -> {
-				var appContext = new AnnotationConfigApplicationContext(AppContextConfig.class);
+				var appContext = new AnnotationConfigApplicationContext(BeanConfig.class);
 				var provider = new SpringContextCommandHandlerProvider(appContext);
 				provider.getCommandHandlerFor(null);
 			});

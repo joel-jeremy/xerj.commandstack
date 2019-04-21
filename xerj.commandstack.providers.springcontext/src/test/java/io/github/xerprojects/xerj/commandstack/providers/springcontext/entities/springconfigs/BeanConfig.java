@@ -8,7 +8,7 @@ import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.
 import io.github.xerprojects.xerj.commandstack.providers.springcontext.entities.TestCommandHandler;
 
 @Configuration
-public class AppContextConfig {
+public class BeanConfig {
     @Bean
     public CommandHandler<TestCommand> getTestCommandHandler() {
         return new TestCommandHandler();  
