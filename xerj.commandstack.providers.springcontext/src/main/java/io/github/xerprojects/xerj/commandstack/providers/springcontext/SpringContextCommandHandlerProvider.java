@@ -3,10 +3,12 @@ package io.github.xerprojects.xerj.commandstack.providers.springcontext;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 
 import io.github.xerprojects.xerj.commandstack.Command;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
+import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
 
 public class SpringContextCommandHandlerProvider implements CommandHandlerProvider {
 
@@ -29,8 +31,20 @@ public class SpringContextCommandHandlerProvider implements CommandHandlerProvid
             throw new IllegalArgumentException("Command type must not be null.");
         }
 
+        String[] handlerBeanNames = appContext.getBeanNamesForType(
+            ResolvableType.forClassWithGenerics(CommandHandler.class, commandType));
+
+        if (handlerBeanNames.length == 0) {
+            return Optional.empty();
+        }
+
+        if (handlerBeanNames.length > 1) {
+            throw new DuplicateCommandHandlerFoundException(commandType, "Multiple command handlers that handle " + commandType
+                + " have been detected by Spring Application Context.");
+        }
+
         @SuppressWarnings("unchecked")
-        CommandHandler<TCommand> instance = appContext.getBean(CommandHandler.class, commandType);
+        CommandHandler<TCommand> instance = appContext.getBean(handlerBeanNames[0], CommandHandler.class);
         return Optional.ofNullable(instance);
     }
 }
