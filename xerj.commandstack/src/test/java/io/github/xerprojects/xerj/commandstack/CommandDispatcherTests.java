@@ -6,17 +6,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-import io.github.xerprojects.xerj.commandstack.entities.BaseCommandHandler;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
 import io.github.xerprojects.xerj.commandstack.entities.TestCommand;
 import io.github.xerprojects.xerj.commandstack.entities.TestCommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandHandlerNotFoundException;
 import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
 import io.github.xerprojects.xerj.commandstack.providers.CompositeCommandHandlerProvider;
 import io.github.xerprojects.xerj.commandstack.providers.RegistryCommandHandlerProvider;
-
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 
 public class CommandDispatcherTests {
 	
@@ -130,7 +130,8 @@ public class CommandDispatcherTests {
 					@Override
 					public <TCommand extends Command> Optional<CommandHandler<TCommand>> getCommandHandlerFor(
 							Class<TCommand> commandType) {
-						return Optional.of(new BaseCommandHandler<TCommand>());
+						CommandHandler<TCommand> ch = c -> CompletableFuture.completedFuture(null);
+						return Optional.of(ch);
 					}
 				};
 				
