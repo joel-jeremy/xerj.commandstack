@@ -1,11 +1,8 @@
 package io.github.xerprojects.xerj.commandstack;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.jupiter.api.Nested;
@@ -14,36 +11,9 @@ import org.junit.jupiter.api.Test;
 import io.github.xerprojects.xerj.commandstack.entities.TestCommand;
 import io.github.xerprojects.xerj.commandstack.entities.TestCommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandHandlerNotFoundException;
-import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
-import io.github.xerprojects.xerj.commandstack.providers.CompositeCommandHandlerProvider;
 import io.github.xerprojects.xerj.commandstack.providers.RegistryCommandHandlerProvider;
 
 public class CommandDispatcherTests {
-	
-	@Nested
-	public class BuilderMethod {
-		@Test
-		public void shouldNeverReturnNull() {
-			CommandDispatcher.Builder builder = CommandDispatcher.builder();
-			assertNotNull(builder);
-		}
-	}
-	
-	@Nested
-	public class BuilderTests {
-		
-		@Nested
-		public class AddCommandHandlerProviderMethod {
-			@Test
-			public void shouldThrowWhenProviderArgumentIsNull() {
-				assertThrows(IllegalArgumentException.class, () -> {
-					CommandDispatcher.Builder builder = CommandDispatcher.builder();
-					// Add null.
-					builder.addCommandHandlerProvider(null);
-				});
-			}
-		}
-	}
 	
 	@Nested
 	public class SendMethod {
@@ -52,17 +22,14 @@ public class CommandDispatcherTests {
 			
 			var commandHandler = new TestCommandHandler();
 			
-			CommandHandlerProvider provider = new RegistryCommandHandlerProvider(config ->
+			var provider = new RegistryCommandHandlerProvider(config ->
 				config.registerCommandHandler(TestCommand.class, () -> commandHandler));
 			
-			CommandDispatcher commandDelegator = CommandDispatcher
-					.builder()
-					.addCommandHandlerProvider(provider)
-					.build();
+			var commandDispatcher = new CommandDispatcher(provider);
 			
 			var command = new TestCommand();
 			
-			commandDelegator.send(command);
+			commandDispatcher.send(command);
 			
 			assertTrue(commandHandler.hasHandledCommand(command));
 		}
@@ -72,21 +39,18 @@ public class CommandDispatcherTests {
 			
 			var commandHandler = new TestCommandHandler();
 			
-			CommandHandlerProvider provider = new RegistryCommandHandlerProvider(config ->
+			var provider = new RegistryCommandHandlerProvider(config ->
 				config.registerCommandHandler(TestCommand.class, () -> commandHandler));
 			
-			CommandDispatcher commandDelegator = CommandDispatcher
-					.builder()
-					.addCommandHandlerProvider(provider)
-					.build();
+			var commandDispatcher = new CommandDispatcher(provider);
 			
 			var command1 = new TestCommand();
 			var command2 = new TestCommand();
 			var command3 = new TestCommand();
 			
-			commandDelegator.send(command1);
-			commandDelegator.send(command2);
-			commandDelegator.send(command3);
+			commandDispatcher.send(command1);
+			commandDispatcher.send(command2);
+			commandDispatcher.send(command3);
 			
 			assertTrue(commandHandler.hasHandledCommand(command1));
 			assertTrue(commandHandler.hasHandledCommand(command2));
@@ -96,12 +60,10 @@ public class CommandDispatcherTests {
 		@Test
 		public void shouldThrowWhenCommandArgumentIsNull() {	
 			assertThrows(IllegalArgumentException.class, () -> {
-				CommandDispatcher commandDelegator = CommandDispatcher
-						.builder()
-						.build();
-				
-				// Null.
-				commandDelegator.send(null);
+				var provider = new RegistryCommandHandlerProvider(c -> {});
+				var commandDispatcher = new CommandDispatcher(provider);
+				// Null command.
+				commandDispatcher.send(null);
 			});
 		}
 		
@@ -109,40 +71,49 @@ public class CommandDispatcherTests {
 		public void shouldThrowWhenNoCommandHandlerIsFound() {
 			
 			assertThrows(CommandHandlerNotFoundException.class, () -> {
-				CommandHandlerProvider provider = new RegistryCommandHandlerProvider(config -> {
+				var provider = new RegistryCommandHandlerProvider(config -> {
 					// No command handlers.
 				});
 				
-				CommandDispatcher commandDelegator = CommandDispatcher
-						.builder()
-						.addCommandHandlerProvider(provider)
-						.build();
+				var commandDispatcher = new CommandDispatcher(provider);
 				
-				commandDelegator.send(new TestCommand());
+				commandDispatcher.send(new TestCommand());
 			});
 		}
-		
+
 		@Test
-		public void shouldThrowWhenDuplicateCommandHandlersAreFound() {
+		public void shouldPropagateExceptionFromCommandHandler() {
 			
-			assertThrows(DuplicateCommandHandlerFoundException.class, () -> {
-				CommandHandlerProvider provider = new CommandHandlerProvider() {
-					@Override
-					public <TCommand extends Command> Optional<CommandHandler<TCommand>> getCommandHandlerFor(
-							Class<TCommand> commandType) {
-						CommandHandler<TCommand> ch = c -> CompletableFuture.completedFuture(null);
-						return Optional.of(ch);
-					}
-				};
+			assertThrows(RuntimeException.class, () -> {
+
+				CommandHandler<TestCommand> handler = c -> { throw new RuntimeException("Oops! Exception in handler."); };
 				
-				var compositeProvider = new CompositeCommandHandlerProvider(List.of(provider, provider));
+				var provider = new RegistryCommandHandlerProvider(config -> {
+					config.registerCommandHandler(TestCommand.class, () -> handler);
+				});
 				
-				CommandDispatcher commandDelegator = CommandDispatcher
-						.builder()
-						.addCommandHandlerProvider(compositeProvider)
-						.build();
+				var commandDispatcher = new CommandDispatcher(provider);
 				
-				commandDelegator.send(new TestCommand());
+				commandDispatcher.send(new TestCommand());
+			});
+		}
+
+		@Test
+		public void shouldPropagateExceptionFromCommandHandlerFuture() {
+			
+			assertThrows(RuntimeException.class, () -> {
+
+				CommandHandler<TestCommand> handler = c -> 
+					CompletableFuture.failedFuture(new RuntimeException("Oops! Exception in handler."));
+				
+				
+				var provider = new RegistryCommandHandlerProvider(config -> {
+					config.registerCommandHandler(TestCommand.class, () -> handler);
+				});
+				
+				var commandDispatcher = new CommandDispatcher(provider);
+				
+				commandDispatcher.send(new TestCommand()).join();
 			});
 		}
 	}

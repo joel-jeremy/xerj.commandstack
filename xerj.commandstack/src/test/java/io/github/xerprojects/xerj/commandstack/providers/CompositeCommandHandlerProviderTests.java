@@ -6,8 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+import io.github.xerprojects.xerj.commandstack.Command;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
+import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
 import io.github.xerprojects.xerj.commandstack.entities.TestCommand;
 import io.github.xerprojects.xerj.commandstack.entities.TestCommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
@@ -68,6 +71,23 @@ public class CompositeCommandHandlerProviderTests {
                 
                 compositeProvider.getCommandHandlerFor(TestCommand.class);
             });
+		}
+		
+		@Test
+		public void shouldPropagateExceptionsFromProviders() {
+			
+			assertThrows(RuntimeException.class, () -> {
+				var provider = new CommandHandlerProvider() {
+					@Override
+					public <TCommand extends Command> Optional<CommandHandler<TCommand>> getCommandHandlerFor(
+							Class<TCommand> commandType) {
+						throw new RuntimeException("Opps! Exception in provider.");
+					}
+				};
+				
+				var compositeProvider = new CompositeCommandHandlerProvider(List.of(provider));
+				compositeProvider.getCommandHandlerFor(TestCommand.class);
+			});
 		}
 
 		@Test
