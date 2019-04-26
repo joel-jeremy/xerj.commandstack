@@ -6,11 +6,11 @@
   <parent>
 		<groupId>io.github.xerprojects</groupId>
 		<artifactId>xerj.commandstack.parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
   <groupId>io.github.xerprojects</groupId>
   <artifactId>xerj.commandstack.providers.springcontext</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <name>xerj.commandstack.providers.springcontext</name>
   <description>XerJ Command Stack's CommandHandlerProvider implementation that utilizes Spring Context.</description>
@@ -35,7 +35,7 @@
     <dependency>
         <groupId>io.github.xerprojects</groupId>
         <artifactId>xerj.commandstack</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </dependency>
     <dependency>
         <groupId>org.springframework</groupId>

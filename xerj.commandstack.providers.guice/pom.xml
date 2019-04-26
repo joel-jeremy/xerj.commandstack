@@ -4,11 +4,11 @@
   <parent>
 		<groupId>io.github.xerprojects</groupId>
 		<artifactId>xerj.commandstack.parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
 	</parent>
   <groupId>io.github.xerprojects</groupId>
   <artifactId>xerj.commandstack.providers.guice</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <name>xerj.commandstack.providers.guice</name>
   <description>XerJ Command Stack's CommandHandlerProvider implementation that utilizes Guice.</description>
@@ -33,7 +33,7 @@
     <dependency>
         <groupId>io.github.xerprojects</groupId>
         <artifactId>xerj.commandstack</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </dependency>
     <dependency>
         <groupId>com.google.inject</groupId>
