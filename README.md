@@ -17,7 +17,7 @@ This project composes of components for implementing the command handling parts 
       * achieved by creating implementations of CommandHandlerProvider:
         * Spring Context
           
-          [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.providers.springcontext.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.eventstack.providers.springcontext)
+          [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.providers.springcontext.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.commandstack.providers.springcontext)
           
         * Guice
           
