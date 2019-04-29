@@ -14,7 +14,7 @@ This project composes of components for implementing the command handling parts 
 * Multiple ways of registering command handlers:
     * Simple registration (no IoC container).
     * IoC container registration
-      * achieved by creating implementations of ContainerCommandHandlerProvider:
+      * achieved by creating implementations of CommandHandlerProvider:
         * Spring Context
           
           [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.providers.springcontext.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.eventstack.providers.springcontext)
@@ -71,9 +71,9 @@ public class RegisterProductCommandHandler : CommandHandler<RegisterProductComma
     }
 
     @Override
-    public CompletableFuture<Void> Handle(RegisterProductCommand command)
+    public CompletableFuture<Void> handle(RegisterProductCommand command)
     {
-        return productRepository.Save(new Product(command.getProductId(), command.getProductName()));
+        return productRepository.save(new Product(command.getProductId(), command.getProductName()));
     }
 }
 ```
@@ -94,7 +94,7 @@ public static void main(String[] args)
     CommandDispatcher dispatcher = new CommandDispatcher(provider);
     
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.Send(new RegisterProductCommand(1, "My Product Name"));
+    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
 
@@ -111,7 +111,7 @@ public static void main(String[] args)
     CommandDispatcher dispatcher = new CommandDispatcher(provider);
 
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.Send(new RegisterProductCommand(1, "My Product Name"));
+    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
 
@@ -126,6 +126,6 @@ public static void main(String[] args)
     CommandDispatcher dispatcher = new CommandDispatcher(provider);
 
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.Send(new RegisterProductCommand(1, "My Product Name"));
+    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
