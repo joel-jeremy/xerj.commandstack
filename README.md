@@ -61,7 +61,7 @@ public class RegisterProductCommand
 }
 
 // Command handler.
-public class RegisterProductCommandHandler : CommandHandler<RegisterProductCommand>
+public class RegisterProductCommandHandler implements CommandHandler<RegisterProductCommand>
 {
     private final ProductRepository productRepository;
 
