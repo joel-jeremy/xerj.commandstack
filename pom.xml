@@ -1,189 +1,87 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+		<groupId>io.github.xerprojects</groupId>
+		<artifactId>xerj.parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
   <groupId>io.github.xerprojects</groupId>
-  <artifactId>xerj.commandstack.parent</artifactId>
-  <version>0.0.1</version>
-  <packaging>pom</packaging>
-  <name>xerj.commandstack.parent</name>
-  <description>XerJ Command Stack's Parent POM.</description>
+  <artifactId>xerj.commandstack</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>xerj.commandstack</name>
+  <description>Simple lightweight command handling library</description>
   <url>https://github.com/XerProjects/xerj.commandstack</url>
   
-  <modules>
-    <module>xerj.commandstack</module>
-    <module>xerj.commandstack.providers.springcontext</module>
-    <module>xerj.commandstack.providers.guice</module>
-  </modules>
-
-  <licenses>
-    <license>
-        <name>Apache License 2.0</name>
-        <url>https://github.com/XerProjects/xerj.commandstack/blob/master/LICENSE</url>
-        <distribution>repo</distribution>
-    </license>
-  </licenses>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>11</java.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
-    <junit-version>5.4.1</junit-version>
-    <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
-    <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
-    <maven-javadoc-plugin-version>3.1.0</maven-javadoc-plugin-version>
-    <maven-source-plugin-version>3.0.1</maven-source-plugin-version>
-    <maven-gpg-plugin-version>1.6</maven-gpg-plugin-version>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-          <groupId>org.junit.jupiter</groupId>
-          <artifactId>junit-jupiter-api</artifactId>
-          <version>${junit-version}</version>
-          <scope>test</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.junit.jupiter</groupId>
-          <artifactId>junit-jupiter-engine</artifactId>
-          <version>${junit-version}</version>
-          <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-api</artifactId>
-        <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <scope>test</scope>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire-plugin-version}</version>
-          <configuration>
-            <!-- For surefire to work with Java modules -->
-            <forkCount>0</forkCount>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>${maven-source-plugin-version}</version>
-          <executions>
-            <execution>
-              <id>attach-sources</id>
-              <goals>
-                <goal>jar-no-fork</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${maven-javadoc-plugin-version}</version>
-          <executions>
-            <execution>
-              <id>attach-javadocs</id>
-              <goals>
-                <goal>jar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-gpg-plugin</artifactId>
-          <version>${maven-gpg-plugin-version}</version>
-          <executions>
-            <execution>
-              <id>sign-artifacts</id>
-              <phase>verify</phase>
-              <goals>
-                <goal>sign</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>io/github/xerprojects/xerj/commandstack/exceptions/**</exclude>
+            <exclude>io/github/xerprojects/xerj/commandstack/utils/**</exclude>
+          </excludes>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
+        <configuration>
+          <argLine>
+            ${argLine}
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry.internal=ALL-UNNAMED
+          </argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
-    <repository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository>
-  </distributionManagement>
-
-  <organization>
-      <name>XerProjects</name>
-      <url>https://github.com/XerProjects</url>
-  </organization>
-    
-  <issueManagement>
-      <system>GitHub</system>
-      <url>https://github.com/XerProjects/xerj.commandstack/issues</url>
-  </issueManagement>
-
-  <scm>
-    <url>https://github.com/XerProjects/xerj.commandstack</url>
-    <connection>
-        scm:git:git://github.com/XerProjects/xerj.commandstack.git
-    </connection>
-    <developerConnection>
-        scm:git:ssh://git@github.com/XerProjects/xerj.commandstack.git
-    </developerConnection>
-  </scm>
-   
-  <developers>
-    <developer>
-        <name>Joel Jeremy Marquez</name>
-    </developer>
-  </developers>
+  <profiles>
+    <profile>
+      <id>snapshots</id>
+      <repositories>
+        <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
 </project>
