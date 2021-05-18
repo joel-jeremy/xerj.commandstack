@@ -33,7 +33,7 @@ jobs:
 
     - name: Publish SNAPSHOT to ossrh
       # Enable release profile
-      run: mvn -V --file pom.xml --no-transfer-progress -Pdev,release clean deploy
+      run: mvn -V --file pom.xml --no-transfer-progress -Psnapshots,release clean deploy
       env:
         NEXUS_USERNAME: xerprojects
         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
