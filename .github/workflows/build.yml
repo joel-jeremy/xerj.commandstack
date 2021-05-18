@@ -1,0 +1,28 @@
+name: Maven Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 11, 16 ] 
+        
+    steps:
+    - uses: actions/checkout@v2.3.4
+    - uses: actions/cache@v2.1.5
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up JDK ${{ matrix.java }} for build
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: ${{ matrix.java }}
+        server-id: ossrh
+    - name: Build with Maven
+      run: mvn -V --file pom.xml --no-transfer-progress -Pdev clean package 
