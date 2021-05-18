@@ -8,7 +8,7 @@ import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
 
 /**
- * Stores the {@link CommandHandlerInstanceFactory} that is mapped to a command type.
+ * Stores the command handler instance factory that is mapped to a command type.
  * @param <TCommand> The command type associated with this registration.
  * 
  * @author Joel Jeremy Marquez
@@ -16,18 +16,19 @@ import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
 public class RegisteredCommandHandler<TCommand> {
 		
     private final Class<TCommand> commandType;
-    private final Supplier<CommandHandler<TCommand>> instanceFactory;
+    private final Supplier<CommandHandler<TCommand>> commandHandlerInstanceFactory;
      
     /**
      * Constructor.
      * @param commandType The command type.
-     * @param instanceFactory Command handler instance factory.
+     * @param commandHandlerInstanceFactory Command handler instance factory.
      */
     public RegisteredCommandHandler(
             Class<TCommand> commandType, 
-            Supplier<CommandHandler<TCommand>> instanceFactory) {
+            Supplier<CommandHandler<TCommand>> commandHandlerInstanceFactory) {
         this.commandType = requireNonNull(commandType, "commandType");
-        this.instanceFactory = requireNonNull(instanceFactory, "instanceFactory");
+        this.commandHandlerInstanceFactory = 
+            requireNonNull(commandHandlerInstanceFactory, "commandHandlerInstanceFactory");
     }
 
     /**
@@ -41,18 +42,18 @@ public class RegisteredCommandHandler<TCommand> {
     /**
      * Get a command handler instance.
      * 
-     * This will validate the command handler instance returned by the {@link CommandHandlerInstanceFactory}
-     * and will throw a {@link CommandHandlerInstanceFactoryException} if:
+     * This will validate the command handler instance returned by the command handler instance factory
+     * and will throw a {@link CommandStackException} if:
      * <ul>
-     *   <li>{@link CommandHandlerInstanceFactory} has thrown an exception, or</li>
-     *   <li>{@link CommandHandlerInstanceFactory} returned null.</li>
+     *   <li>Command handler instance factory has thrown an exception, or</li>
+     *   <li>Command handler instance factory returned null.</li>
      * </ul>
      * @return The command handler instance that can handle the registered comand type.
      */
     public CommandHandler<TCommand> getInstance() {
         CommandHandler<TCommand> instance;
         try {
-            instance = instanceFactory.get();
+            instance = commandHandlerInstanceFactory.get();
         } catch (Exception e) {
             throw new CommandStackException(
                 "Registered command handler instance factory for " + getCommandType() +
