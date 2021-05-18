@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
 import io.github.xerprojects.xerj.commandstack.TestCommand;
+import io.github.xerprojects.xerj.commandstack.dispatchers.DefaultCommandDispatcher.UnhandleCommandListener;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,18 +35,16 @@ public class DefaultCommandDispatcherTests {
 		}
 
 		@Test
-		@DisplayName(
-			"should throw when commandHandlerProvider argument is null " +
-			"and commandHandlerNotFoundHandler argument is not null")
-		public void test2(@Mock Consumer<Class<?>> commandHandlerNotFoundHandler) {
+		@DisplayName("should throw when commandHandlerProvider argument is null " +
+			"and unhandledCommandListener argument is not null")
+		public void test2(@Mock UnhandleCommandListener mockUnhandledCommandListener) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new DefaultCommandDispatcher(null, commandHandlerNotFoundHandler);
+				new DefaultCommandDispatcher(null, mockUnhandledCommandListener);
 			});
 		}
 
 		@Test
-		@DisplayName(
-			"should throw when commandHandlerNotFoundHandler argument is null")
+		@DisplayName("should throw when unhandledCommandListener argument is null")
 		public void test3(@Mock CommandHandlerProvider commandHandlerProvider) {
 			assertThrows(IllegalArgumentException.class, () -> {
 				new DefaultCommandDispatcher(commandHandlerProvider, null);
@@ -145,9 +143,9 @@ public class DefaultCommandDispatcherTests {
 		}
 
 		@Test
-		@DisplayName("should invoke command handler not found handler is no command handler is found")
+		@DisplayName("should invoke command handler not found listener when no command handler is found")
 		public void test7(@Mock CommandHandlerProvider mockProvider,
-				@Mock Consumer<Class<?>> mockCommandHandlerNotFoundHandler) {
+				@Mock UnhandleCommandListener mockUnhandledCommandListener) {
 
 			var testCommand = new TestCommand();
 
@@ -155,12 +153,12 @@ public class DefaultCommandDispatcherTests {
 				.thenReturn(Optional.empty());
 			
 			var commandDispatcher = new DefaultCommandDispatcher(
-				mockProvider, mockCommandHandlerNotFoundHandler);
+				mockProvider, mockUnhandledCommandListener);
 			
 			commandDispatcher.send(testCommand);
 
 			// should be the correct command type.
-			verify(mockCommandHandlerNotFoundHandler).accept(testCommand.getClass());
+			verify(mockUnhandledCommandListener).notifyUnhandledCommand(testCommand);
 		}
 	}
 }

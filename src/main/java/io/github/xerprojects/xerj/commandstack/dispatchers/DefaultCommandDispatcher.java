@@ -19,7 +19,6 @@ package io.github.xerprojects.xerj.commandstack.dispatchers;
 import static io.github.xerprojects.xerj.commandstack.utils.Arguments.requireNonNull;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import io.github.xerprojects.xerj.commandstack.CommandDispatcher;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
@@ -35,7 +34,7 @@ import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
 public class DefaultCommandDispatcher implements CommandDispatcher {
 	
 	private final CommandHandlerProvider commandHandlerProvider;
-	private final Consumer<Class<?>> defaultCommandHandler;
+	private final UnhandleCommandListener unhandledCommandListener;
 
 	/**
 	 * Constructor.
@@ -44,32 +43,33 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 	 */
 	public DefaultCommandDispatcher(CommandHandlerProvider commandHandlerProvider) {
 		// No-op command handler not found handler.
-		this(commandHandlerProvider, DefaultCommandDispatcher::noOp);
+		this(commandHandlerProvider, new NoOpListener());
 	}
 
 	/**
 	 * Constructor.
 	 * @param commandHandlerProvider 
 	 * Command handler provider where this dispatcher will get its command handlers from.
-	 * @param commandHandlerNotFoundHandler 
-	 * This gets executed if no command handler is found for the command being dispatched.
-	 * The command handler's Class<?> parameter is the type of the command being dispatched.
+	 * @param unhandledCommandListener 
+	 * This listener gets executed whenever a command goes unhandled because there was 
+	 * no registered command handler.
 	 */
 	public DefaultCommandDispatcher(
 			CommandHandlerProvider commandHandlerProvider,
-			Consumer<Class<?>> commandHandlerNotFoundHandler) {
+			UnhandleCommandListener unhandledCommandListener) {
 		this.commandHandlerProvider = 
 			new NonNullOptionalProvider(
 				requireNonNull(commandHandlerProvider, "commandHandlerProvider"));
 		
-		this.defaultCommandHandler = 
-			requireNonNull(commandHandlerNotFoundHandler, "commandHandlerNotFoundHandler");
+		this.unhandledCommandListener = 
+			requireNonNull(unhandledCommandListener, "unhandledCommandListener");
 	}
 	
 	/**
 	 * Dispatch command to its registered command handler.
-	 * This will log a warning message if no command
-	 * handler is registered for the given command.
+	 * 
+	 * This will invoke the dispatcher's unhandled command listener
+	 * when there is no registered command handler for the command.
 	 * 
 	 * @param <TCommand> The command type.
 	 * @param command The command to dispatch.
@@ -83,15 +83,29 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 		
 		CommandHandler<TCommand> resolvedHandler = 
 			commandHandlerProvider.getCommandHandlerFor(actualCommandType)
-				.orElse(c -> defaultCommandHandler.accept(c.getClass()));
+				.orElse(unhandledCommandListener::notifyUnhandledCommand);
 		
 		resolvedHandler.handle(command);
 	}
 
-	private static void noOp(Class<?> commandType) {
-		// No-op.
+	/**
+	 * Listener that is invoked by {@link DefaultCommandDispatcher}
+	 * whenever a command goes unhandled because there was no registered command handler.
+	 */
+	public interface UnhandleCommandListener {
+		/**
+		 * Notify that the command was not dispatched to any command handlers.
+		 * 
+		 * @param <TCommand> The command type.
+		 * @param command The command that was not dispatched to any command handlers.
+		 */
+		<TCommand> void notifyUnhandledCommand(TCommand command);
 	}
 
+	 /**
+	  * Decorator that checks if decorated command handler provider's response is null.
+	  * If so, throw a {@link CommandStackException}.
+	  */
 	private static class NonNullOptionalProvider implements CommandHandlerProvider {
 
 		private final CommandHandlerProvider commandHandlerProvider;
@@ -103,16 +117,24 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 		@Override
 		public <TCommand> Optional<CommandHandler<TCommand>> getCommandHandlerFor(
 				Class<TCommand> commandType) {
-			Optional<CommandHandler<TCommand>> handler = 
+			Optional<CommandHandler<TCommand>> resolvedHandler = 
 				commandHandlerProvider.getCommandHandlerFor(commandType);
 			
-			if (handler == null) {
+			if (resolvedHandler == null) {
 				throw new CommandStackException(
 					"Command handler provider returned null. Please check command handler provider configuration: " +
 						commandHandlerProvider.getClass());
 			}
 
-			return handler;
+			return resolvedHandler;
 		}
+	}
+
+	/**
+	 * No-op unhandled command listener.
+	 */
+	private static class NoOpListener implements UnhandleCommandListener {
+		@Override
+		public <TCommand> void notifyUnhandledCommand(TCommand command) {}
 	}
 }

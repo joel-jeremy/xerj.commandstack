@@ -27,6 +27,9 @@ public class DuplicateCommandHandlerRegistrationException extends CommandStackEx
 	private static final long serialVersionUID = 1L;
 	private static final String DEFAULT_EXCEPTION_MESSAGE = "Attempting to register duplicate command handlers for %s.";
 	
+	/**
+	 * The command type associated with this exception.
+	 */
 	private final Class<?> commandType;
 	
 	/**

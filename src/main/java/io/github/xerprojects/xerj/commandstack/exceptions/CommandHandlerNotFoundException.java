@@ -26,6 +26,9 @@ public class CommandHandlerNotFoundException extends CommandStackException {
 	private static final long serialVersionUID = 1L;
 	private static final String DEFAULT_EXCEPTION_MESSAGE = "Unable to find registered command handler for command of type %s.";
 	
+	/**
+	 * The command type associated with this exception.
+	 */
 	private final Class<?> commandType;
 
 	/**
@@ -65,6 +68,10 @@ public class CommandHandlerNotFoundException extends CommandStackException {
 		this(commandType, null, null);
 	}
 
+	/**
+	 * The dispatched command that caused the exception.
+	 * @return The command type.
+	 */
 	public Class<?> getCommandType() {
 		return commandType;
 	}
