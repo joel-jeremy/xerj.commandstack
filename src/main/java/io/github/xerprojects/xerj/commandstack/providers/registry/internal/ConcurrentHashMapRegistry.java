@@ -1,6 +1,6 @@
 package io.github.xerprojects.xerj.commandstack.providers.registry.internal;
 
-import static io.github.xerprojects.xerj.commandstack.utils.Arguments.requireNonNull;
+import static io.github.xerprojects.xerj.commandstack.internal.utils.Arguments.requireNonNull;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

@@ -21,7 +21,7 @@ import io.github.xerprojects.xerj.commandstack.TestCommand;
 import io.github.xerprojects.xerj.commandstack.TestSynchronousCommand;
 
 @ExtendWith(MockitoExtension.class)
-public class AsyncCommandHandlerDispatcherTests {
+public class AsyncCommandDispatcherTests {
 
     @Nested
 	public class Constructor {

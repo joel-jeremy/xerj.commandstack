@@ -14,6 +14,14 @@
   <name>xerj.commandstack</name>
   <description>Simple lightweight command handling library</description>
   <url>https://github.com/XerProjects/xerj.commandstack</url>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>https://github.com/XerProjects/xerj.commandstack/blob/main/LICENSE</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   
   <dependencies>
     <dependency>
@@ -55,7 +63,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
-            ${argLine}
+            ${surefire.jacoco.args}
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED

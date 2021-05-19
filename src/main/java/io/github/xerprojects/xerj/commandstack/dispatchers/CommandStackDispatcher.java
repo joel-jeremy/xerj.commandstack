@@ -16,7 +16,7 @@
 
 package io.github.xerprojects.xerj.commandstack.dispatchers;
 
-import static io.github.xerprojects.xerj.commandstack.utils.Arguments.requireNonNull;
+import static io.github.xerprojects.xerj.commandstack.internal.utils.Arguments.requireNonNull;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
  * 
  * @author Joel Jeremy Marquez
  */
-public class DefaultCommandDispatcher implements CommandDispatcher {
+public class CommandStackDispatcher implements CommandDispatcher {
 	
 	private final CommandHandlerProvider commandHandlerProvider;
 	private final UnhandleCommandListener unhandledCommandListener;
@@ -41,7 +41,7 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 	 * @param commandHandlerProvider 
 	 * Command handler provider where this dispatcher will get its command handlers from.
 	 */
-	public DefaultCommandDispatcher(CommandHandlerProvider commandHandlerProvider) {
+	public CommandStackDispatcher(CommandHandlerProvider commandHandlerProvider) {
 		// No-op command handler not found handler.
 		this(commandHandlerProvider, new NoOpListener());
 	}
@@ -54,7 +54,7 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 	 * This listener gets executed whenever a command goes unhandled because there was 
 	 * no registered command handler.
 	 */
-	public DefaultCommandDispatcher(
+	public CommandStackDispatcher(
 			CommandHandlerProvider commandHandlerProvider,
 			UnhandleCommandListener unhandledCommandListener) {
 		this.commandHandlerProvider = 
@@ -89,7 +89,7 @@ public class DefaultCommandDispatcher implements CommandDispatcher {
 	}
 
 	/**
-	 * Listener that is invoked by {@link DefaultCommandDispatcher}
+	 * Listener that is invoked by {@link CommandStackDispatcher}
 	 * whenever a command goes unhandled because there was no registered command handler.
 	 */
 	public interface UnhandleCommandListener {

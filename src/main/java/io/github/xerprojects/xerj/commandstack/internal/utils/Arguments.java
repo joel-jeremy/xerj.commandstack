@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.github.xerprojects.xerj.commandstack.utils;
+package io.github.xerprojects.xerj.commandstack.internal.utils;
 
 import java.util.function.Predicate;
 
 /**
- * Argument utilities.
+ * Method argument utilities.
  * 
  * @author Joel Jeremy Marquez
  */

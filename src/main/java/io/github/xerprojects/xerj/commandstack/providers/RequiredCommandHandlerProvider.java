@@ -16,7 +16,7 @@
 
 package io.github.xerprojects.xerj.commandstack.providers;
 
-import static io.github.xerprojects.xerj.commandstack.utils.Arguments.requireNonNull;
+import static io.github.xerprojects.xerj.commandstack.internal.utils.Arguments.requireNonNull;
 
 import java.util.Optional;
 

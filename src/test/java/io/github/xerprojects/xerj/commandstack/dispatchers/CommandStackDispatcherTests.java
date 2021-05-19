@@ -18,11 +18,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
 import io.github.xerprojects.xerj.commandstack.TestCommand;
-import io.github.xerprojects.xerj.commandstack.dispatchers.DefaultCommandDispatcher.UnhandleCommandListener;
+import io.github.xerprojects.xerj.commandstack.dispatchers.CommandStackDispatcher.UnhandleCommandListener;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
 
 @ExtendWith(MockitoExtension.class)
-public class DefaultCommandDispatcherTests {
+public class CommandStackDispatcherTests {
 
 	@Nested
 	public class Constructor {
@@ -30,7 +30,7 @@ public class DefaultCommandDispatcherTests {
 		@DisplayName("should throw when commandHandlerProvider argument is null")
 		public void test1() {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new DefaultCommandDispatcher(null);
+				new CommandStackDispatcher(null);
 			});
 		}
 
@@ -39,7 +39,7 @@ public class DefaultCommandDispatcherTests {
 			"and unhandledCommandListener argument is not null")
 		public void test2(@Mock UnhandleCommandListener mockUnhandledCommandListener) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new DefaultCommandDispatcher(null, mockUnhandledCommandListener);
+				new CommandStackDispatcher(null, mockUnhandledCommandListener);
 			});
 		}
 
@@ -47,7 +47,7 @@ public class DefaultCommandDispatcherTests {
 		@DisplayName("should throw when unhandledCommandListener argument is null")
 		public void test3(@Mock CommandHandlerProvider commandHandlerProvider) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new DefaultCommandDispatcher(commandHandlerProvider, null);
+				new CommandStackDispatcher(commandHandlerProvider, null);
 			});
 		}
 	}
@@ -63,7 +63,7 @@ public class DefaultCommandDispatcherTests {
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
 				.thenReturn(Optional.of(mockHandler));
 			
-			var commandDispatcher = new DefaultCommandDispatcher(mockProvider);
+			var commandDispatcher = new CommandStackDispatcher(mockProvider);
 			
 			var testCommand = new TestCommand();
 			
@@ -81,7 +81,7 @@ public class DefaultCommandDispatcherTests {
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
 				.thenReturn(Optional.of(mockHandler));
 				
-			var commandDispatcher = new DefaultCommandDispatcher(mockProvider);
+			var commandDispatcher = new CommandStackDispatcher(mockProvider);
 			
 			var command1 = new TestCommand();
 			var command2 = new TestCommand();
@@ -100,7 +100,7 @@ public class DefaultCommandDispatcherTests {
 		@DisplayName("should throw when command argument is null")
 		public void test3(@Mock CommandHandlerProvider mockProvider) {	
 			assertThrows(IllegalArgumentException.class, () -> {
-				var commandDispatcher = new DefaultCommandDispatcher(mockProvider);
+				var commandDispatcher = new CommandStackDispatcher(mockProvider);
 				// Null command.
 				commandDispatcher.send(null);
 			});
@@ -122,7 +122,7 @@ public class DefaultCommandDispatcherTests {
 
 				var testCommand = new TestCommand();
 				
-				var commandDispatcher = new DefaultCommandDispatcher(mockProvider);
+				var commandDispatcher = new CommandStackDispatcher(mockProvider);
 				
 				commandDispatcher.send(testCommand);
 			});
@@ -137,7 +137,7 @@ public class DefaultCommandDispatcherTests {
 				.thenReturn(null);
 			
 			assertThrows(CommandStackException.class, () -> {
-				var commandDispatcher = new DefaultCommandDispatcher(mockProvider);
+				var commandDispatcher = new CommandStackDispatcher(mockProvider);
 				commandDispatcher.send(new TestCommand());
 			});
 		}
@@ -152,7 +152,7 @@ public class DefaultCommandDispatcherTests {
 			when(mockProvider.getCommandHandlerFor(any()))
 				.thenReturn(Optional.empty());
 			
-			var commandDispatcher = new DefaultCommandDispatcher(
+			var commandDispatcher = new CommandStackDispatcher(
 				mockProvider, mockUnhandledCommandListener);
 			
 			commandDispatcher.send(testCommand);
