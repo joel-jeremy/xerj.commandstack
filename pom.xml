@@ -92,4 +92,30 @@
       </repositories>
     </profile>
   </profiles>
+
+  <organization>
+    <name>Xer Projects</name>
+    <url>https://github.com/XerProjects</url>
+  </organization>
+    
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/XerProjects/xerj.commandstack/issues</url>
+  </issueManagement>
+
+  <scm>
+    <url>https://github.com/XerProjects/xerj.commandstack</url>
+    <connection>
+      scm:git:git://github.com/XerProjects/xerj.commandstack.git
+    </connection>
+    <developerConnection>
+      scm:git:ssh://git@github.com/XerProjects/xerj.commandstack.git
+    </developerConnection>
+  </scm>
+   
+  <developers>
+    <developer>
+      <name>Joel Jeremy Marquez</name>
+    </developer>
+  </developers>
 </project>
