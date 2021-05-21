@@ -63,7 +63,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <argLine>
-            ${surefire.jacoco.args}
+            @{surefire.jacoco.args}
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
             --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED

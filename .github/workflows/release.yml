@@ -37,7 +37,7 @@ jobs:
     - name: Release ${{ github.event.inputs.releaseVersion }} to ossrh
       # Enable release profile
       run: >
-        mvn -V --file pom.xml --no-transfer-progress -Prelease
+        mvn -V --file pom.xml --no-transfer-progress -Pcode-coverage,release
         release:clean release:prepare release:perform
         -DreleaseVersion=${{ github.event.inputs.releaseVersion }}
         -Dtag=v${{ github.event.inputs.releaseVersion }}
