@@ -38,15 +38,15 @@ This project composes of components for implementing the command handling parts 
 
 ### Sample Command and Command Handler
 
+- Commands are just POJOs or if you are in a later java version, you can use records if you prefer.
+
 ```java
-// Example command.
-public class RegisterProductCommand
-{
+// Example POJO command.
+public class RegisterProductCommand {
     private final int productId;
     private final String productName;
 
-    public RegisterProductCommand(int productId, String productName) 
-    {
+    public RegisterProductCommand(int productId, String productName) {
         this.productId = productId;
         this.productName = productName;
     }
@@ -61,19 +61,18 @@ public class RegisterProductCommand
 }
 
 // Command handler.
-public class RegisterProductCommandHandler implements CommandHandler<RegisterProductCommand>
-{
+public class RegisterProductCommandHandler implements CommandHandler<RegisterProductCommand> {
     private final ProductRepository productRepository;
 
-    public RegisterProductCommandHandler(ProductRepository productRepository)
-    {
+    public RegisterProductCommandHandler(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @Override
-    public CompletableFuture<Void> handle(RegisterProductCommand command)
-    {
-        return productRepository.save(new Product(command.getProductId(), command.getProductName()));
+    public void handle(RegisterProductCommand command) {
+        validate(command);
+
+        productRepository.save(new Product(command.getProductId(), command.getProductName()));
     }
 }
 ```
@@ -83,49 +82,46 @@ Before we can dispatch any commands, first we need to register our command handl
 
 #### 1. Simple Registration (No IoC container)
 ```java
-public static void main(String[] args)
-{
+public static void main(String[] args) {
     RegistryCommandHandlerProvider provider = new RegistryCommandHandlerProvider(registry -> {
         registry.registerCommandHandler(RegisterProductCommand.class, () -> new RegisterProductCommandHandler(
             new InMemoryProductRepository()
         ));
     });
 
-    CommandDispatcher dispatcher = new CommandDispatcher(provider);
+    CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
     
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
+    dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
 
 #### 2. Container Registration
 
-Spring Context
+- Spring Context
 ```java
-public static void main(String[] args)
-{ 
+public static void main(String[] args) { 
     ApplicationContext appContext = new AnnotationConfigApplicationContext(BeanConfigs.class);
 
     SpringContextCommandHandlerPovider provider = new SpringContextCommandHandlerProvider(appContext);
 
-    CommandDispatcher dispatcher = new CommandDispatcher(provider);
+    CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
 
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
+    dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
 
-Guice
+- Guice
 ```java
-public static void main(String[] args)
-{ 
+public static void main(String[] args) { 
     Injector injector = Guice.createInjector(new AppModule());
 
     GuiceCommandHandlerPovider provider = new GuiceCommandHandlerProvider(injector);
 
-    CommandDispatcher dispatcher = new CommandDispatcher(provider);
+    CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
 
     // Dispatch command.
-    CompletableFuture<Void> future = dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
+    dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
