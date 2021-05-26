@@ -14,31 +14,37 @@ This project composes of components for implementing the command handling parts 
 * Multiple ways of registering command handlers:
     * Simple registration (no IoC container).
     * IoC container registration
-      * achieved by creating implementations of CommandHandlerProvider:
-        * Spring Context
-          
-          [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.providers.springcontext.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.commandstack.providers.springcontext)
-          
-        * Guice
-          
-          [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.providers.guice.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.commandstack.providers.guice)
+      * achieved by creating implementations of CommandHandlerProvider: [See sample CommandHandlerProvider implementations](https://github.com/XerProjects/xerj.commandstack.samples/tree/main/sample-providers)
           
                     
     * Attribute registration (Soon!)
       * achieved by marking methods with @CommandHandler annotations.
 
 ## Installation
-* You can simply clone this repository, build the source, reference the jar from your project, and code away!
 
 * XerJ.CommandStack is also available in the Maven Central:
 
     [![Maven Central](https://img.shields.io/maven-central/v/io.github.xerprojects/xerj.commandstack.svg?style=for-the-badge)](https://mvnrepository.com/artifact/io.github.xerprojects/xerj.commandstack)
+   
+   Maven:
+   ```xml
+   <dependency>
+     <groupId>io.github.xerprojects</groupId>
+     <artifactId>xerj.commandstack</artifactId>
+     <version>${xerj.commandstack.version}</version>
+   </dependency>
+   ```
+   
+   Gradle:
+   ```gradle
+   implementation group: 'io.github.xerprojects', name: 'xerj.commandstack', version: $rootProject.commandStackVersion
+   ```
 
 ## Getting Started
 
 ### Sample Command and Command Handler
 
-- Commands are just POJOs or if you are in a later java version, you can use records if you prefer.
+Commands are just POJOs or if you are in a later java version, you can use records if you prefer.
 
 ```java
 // Example POJO command.
@@ -80,13 +86,15 @@ public class RegisterProductCommandHandler implements CommandHandler<RegisterPro
 
 Before we can dispatch any commands, first we need to register our command handlers. There are several ways to do this:
 
-#### 1. Simple Registration (No IoC container)
+#### 1. Built-in (No dependency injection frameworks)
 ```java
 public static void main(String[] args) {
     RegistryCommandHandlerProvider provider = new RegistryCommandHandlerProvider(registry -> {
-        registry.registerCommandHandler(RegisterProductCommand.class, () -> new RegisterProductCommandHandler(
-            new InMemoryProductRepository()
-        ));
+        registry.registerCommandHandler(RegisterProductCommand.class, () -> 
+            new RegisterProductCommandHandler(
+                new InMemoryProductRepository()
+            )
+        );
     });
 
     CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
@@ -96,32 +104,28 @@ public static void main(String[] args) {
 }
 ```
 
-#### 2. Container Registration
+#### 2. Dependency Injection Frameworks
 
-- Spring Context
+- Spring Context - See [Sample Spring Context Command Handler Provider](https://github.com/XerProjects/xerj.commandstack.samples/tree/main/sample-providers/sample-springcontext-provider)
+
+- Guice - See [Sample Guice Command Handler Provider](https://github.com/XerProjects/xerj.commandstack.samples/tree/main/sample-providers/sample-guice-provider)
+
+- Dagger - See [Sample Dagger Command Handler Provider](https://github.com/XerProjects/xerj.commandstack.samples/tree/main/sample-providers/sample-dagger-provider)
+
+
+### Async Dispatch
+
+Async dispatch is supported by decorating the `CommandStackDispatcher` with `AsyncCommandDispatcher`:
 ```java
-public static void main(String[] args) { 
-    ApplicationContext appContext = new AnnotationConfigApplicationContext(BeanConfigs.class);
-
-    SpringContextCommandHandlerPovider provider = new SpringContextCommandHandlerProvider(appContext);
-
-    CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
-
-    // Dispatch command.
-    dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
-}
-```
-
-- Guice
-```java
-public static void main(String[] args) { 
-    Injector injector = Guice.createInjector(new AppModule());
-
-    GuiceCommandHandlerPovider provider = new GuiceCommandHandlerProvider(injector);
-
-    CommandDispatcher dispatcher = new CommandStackDispatcher(provider);
-
-    // Dispatch command.
-    dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
+public static void main(String[] args) {
+   ExecutorService executor = Executors.newWorkStealingPool();
+   
+   CommandHandlerProvider commandHandlerProvider = getCommandHandlerProvider();
+   
+   CommandDispatcher dispatcher = new AsyncCommandDispatcher(
+      new CommandStackDispatcher(commandHandlerProvider),
+      executor);
+      
+   dispatcher.send(new RegisterProductCommand(1, "My Product Name"));
 }
 ```
