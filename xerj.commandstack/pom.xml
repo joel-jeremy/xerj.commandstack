@@ -39,33 +39,31 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <exclude>io/github/xerprojects/xerj/commandstack/exceptions/**</exclude>
-              <exclude>io/github/xerprojects/xerj/commandstack/utils/**</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <argLine>
-              @{surefire.jacoco.args}
-              --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
-              --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
-              --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED
-              --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry=ALL-UNNAMED
-              --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry.internal=ALL-UNNAMED
-            </argLine>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>io/github/xerprojects/xerj/commandstack/exceptions/**</exclude>
+            <exclude>io/github/xerprojects/xerj/commandstack/utils/**</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>
+            @{surefire.jacoco.args}
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry=ALL-UNNAMED
+            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry.internal=ALL-UNNAMED
+          </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
