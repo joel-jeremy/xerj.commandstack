@@ -2,18 +2,22 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-		<groupId>io.github.xerprojects</groupId>
-		<artifactId>xerj.parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
+    <groupId>io.github.xerprojects</groupId>
+    <artifactId>xerj.parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
   <groupId>io.github.xerprojects</groupId>
-  <artifactId>xerj.commandstack</artifactId>
+  <artifactId>xerj.commandstack.parent</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
-  <name>xerj.commandstack</name>
-  <description>Simple lightweight command handling library</description>
+  <name>xerj.commandstack.parent</name>
+  <description>Parent POM for command stack libraries.</description>
   <url>https://github.com/XerProjects/xerj.commandstack</url>
+
+  <modules>
+    <module>xerj.commandstack</module>
+  </modules>
 
   <licenses>
     <license>
@@ -22,58 +26,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>io/github/xerprojects/xerj/commandstack/exceptions/**</exclude>
-            <exclude>io/github/xerprojects/xerj/commandstack/utils/**</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>
-            @{surefire.jacoco.args}
-            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers=ALL-UNNAMED
-            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.dispatchers.async=ALL-UNNAMED
-            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers=ALL-UNNAMED
-            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry=ALL-UNNAMED
-            --add-opens io.github.xerprojects.xerj.commandstack/io.github.xerprojects.xerj.commandstack.providers.registry.internal=ALL-UNNAMED
-          </argLine>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <profiles>
     <profile>
