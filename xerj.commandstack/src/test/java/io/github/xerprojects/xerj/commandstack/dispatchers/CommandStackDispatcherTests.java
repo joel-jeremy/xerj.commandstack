@@ -17,9 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
 import io.github.xerprojects.xerj.commandstack.dispatchers.CommandStackDispatcher.UnhandleCommandListener;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class CommandStackDispatcherTests {
@@ -37,17 +37,17 @@ public class CommandStackDispatcherTests {
 		@Test
 		@DisplayName("should throw when commandHandlerProvider argument is null " +
 			"and unhandledCommandListener argument is not null")
-		public void test2(@Mock UnhandleCommandListener mockUnhandledCommandListener) {
+		public void test2(@Mock(stubOnly = true) UnhandleCommandListener stubUnhandledCommandListener) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new CommandStackDispatcher(null, mockUnhandledCommandListener);
+				new CommandStackDispatcher(null, stubUnhandledCommandListener);
 			});
 		}
 
 		@Test
 		@DisplayName("should throw when unhandledCommandListener argument is null")
-		public void test3(@Mock CommandHandlerProvider commandHandlerProvider) {
+		public void test3(@Mock(stubOnly = true) CommandHandlerProvider stubProvider) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new CommandStackDispatcher(commandHandlerProvider, null);
+				new CommandStackDispatcher(stubProvider, null);
 			});
 		}
 	}
@@ -56,6 +56,7 @@ public class CommandStackDispatcherTests {
 	public class SendMethod {
 		@Test
 		@DisplayName("should send command to command handler")
+		@SuppressWarnings("exports")
 		public void test1(
 				@Mock CommandHandlerProvider mockProvider,
 				@Mock CommandHandler<TestCommand> mockHandler) {
@@ -74,6 +75,7 @@ public class CommandStackDispatcherTests {
 		
 		@Test
 		@DisplayName("should send all commands to command handler")
+		@SuppressWarnings("exports")
 		public void test2(
 				@Mock CommandHandlerProvider mockProvider,
 				@Mock CommandHandler<TestCommand> mockHandler) {
@@ -98,9 +100,9 @@ public class CommandStackDispatcherTests {
 		
 		@Test
 		@DisplayName("should throw when command argument is null")
-		public void test3(@Mock CommandHandlerProvider mockProvider) {	
+		public void test3(@Mock(stubOnly = true) CommandHandlerProvider stubProvider) {	
 			assertThrows(IllegalArgumentException.class, () -> {
-				var commandDispatcher = new CommandStackDispatcher(mockProvider);
+				var commandDispatcher = new CommandStackDispatcher(stubProvider);
 				// Null command.
 				commandDispatcher.send(null);
 			});
@@ -108,18 +110,17 @@ public class CommandStackDispatcherTests {
 
 		@Test
 		@DisplayName("should propagate exception from command handler")
+		@SuppressWarnings("exports")
 		public void test5(
 				@Mock CommandHandlerProvider mockProvider,
 				@Mock CommandHandler<TestCommand> mockHandler) {
 
-			doThrow(RuntimeException.class).when(mockHandler)
-				.handle(any(TestCommand.class));
+			doThrow(RuntimeException.class).when(mockHandler).handle(any());
 
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
 				.thenReturn(Optional.of(mockHandler));
 	
 			assertThrows(RuntimeException.class, () -> {
-
 				var testCommand = new TestCommand();
 				
 				var commandDispatcher = new CommandStackDispatcher(mockProvider);
@@ -144,7 +145,8 @@ public class CommandStackDispatcherTests {
 
 		@Test
 		@DisplayName("should invoke command handler not found listener when no command handler is found")
-		public void test7(@Mock CommandHandlerProvider mockProvider,
+		public void test7(
+				@Mock CommandHandlerProvider mockProvider,
 				@Mock UnhandleCommandListener mockUnhandledCommandListener) {
 
 			var testCommand = new TestCommand();
@@ -159,6 +161,20 @@ public class CommandStackDispatcherTests {
 
 			// should be the correct command type.
 			verify(mockUnhandledCommandListener).notifyUnhandledCommand(testCommand);
+		}
+
+		@Test
+		@DisplayName("should invoke no-op unhandled command listener when no command handler is found")
+		public void test8(@Mock CommandHandlerProvider mockProvider) {
+
+			var testCommand = new TestCommand();
+
+			when(mockProvider.getCommandHandlerFor(any()))
+				.thenReturn(Optional.empty());
+			
+			var commandDispatcher = new CommandStackDispatcher(mockProvider);
+			
+			commandDispatcher.send(testCommand);
 		}
 	}
 }

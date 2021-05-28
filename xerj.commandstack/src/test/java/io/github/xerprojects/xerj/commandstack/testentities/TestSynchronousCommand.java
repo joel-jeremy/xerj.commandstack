@@ -1,4 +1,4 @@
-package io.github.xerprojects.xerj.commandstack;
+package io.github.xerprojects.xerj.commandstack.testentities;
 
 import io.github.xerprojects.xerj.commandstack.dispatchers.async.SynchronousCommand;
 

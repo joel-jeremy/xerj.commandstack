@@ -17,8 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandDispatcher;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
-import io.github.xerprojects.xerj.commandstack.TestSynchronousCommand;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
+import io.github.xerprojects.xerj.commandstack.testentities.TestSynchronousCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class AsyncCommandDispatcherTests {
@@ -27,17 +27,17 @@ public class AsyncCommandDispatcherTests {
 	public class Constructor {
 		@Test
 		@DisplayName("should throw when executor service is null")
-		public void test1(@Mock ExecutorService mockExecutorService) {
+		public void test1(@Mock(stubOnly = true) ExecutorService stubExecutorService) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new AsyncCommandDispatcher(null, mockExecutorService);
+				new AsyncCommandDispatcher(null, stubExecutorService);
 			});
 		}
 
         @Test
 		@DisplayName("should throw when decorated provider is null")
-		public void test2(@Mock CommandDispatcher mockCommandDispatcher) {
+		public void test2(@Mock(stubOnly = true) CommandDispatcher stubCommandDispatcher) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				new AsyncCommandDispatcher(mockCommandDispatcher, null);
+				new AsyncCommandDispatcher(stubCommandDispatcher, null);
 			});
 		}
 	}
@@ -83,12 +83,12 @@ public class AsyncCommandDispatcherTests {
         @Test
 		@DisplayName("should throw when command argument is null")
 		public void test3(
-                @Mock CommandDispatcher mockCommandDispatcher,
-                @Mock ExecutorService mockExecutorService) {
+                @Mock(stubOnly = true) CommandDispatcher stubCommandDispatcher,
+                @Mock(stubOnly = true) ExecutorService stubExecutorService) {
 
 			assertThrows(IllegalArgumentException.class, () -> {
 				var commandDispatcher = new AsyncCommandDispatcher(
-                    mockCommandDispatcher, mockExecutorService);
+                    stubCommandDispatcher, stubExecutorService);
 				// Null command.
 				commandDispatcher.send(null);
 			});

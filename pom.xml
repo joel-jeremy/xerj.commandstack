@@ -15,8 +15,13 @@
   <description>Parent POM for command stack libraries.</description>
   <url>https://github.com/XerProjects/xerj.commandstack</url>
 
+  <properties>
+    <jacoco.instruction.coverage>0.95</jacoco.instruction.coverage>
+  </properties>
+
   <modules>
     <module>xerj.commandstack</module>
+    <module>xerj.commandstack.providers.springcontext</module>
   </modules>
 
   <licenses>

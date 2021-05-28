@@ -15,9 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
-import io.github.xerprojects.xerj.commandstack.TestCommandHandler;
 import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerRegistrationException;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class RegistryCommandHandlerProviderTests {
@@ -40,11 +39,14 @@ public class RegistryCommandHandlerProviderTests {
 		public class RegisterCommandHandlerMethod {
 			@Test
 			@DisplayName("should throw when command type argument is null")
-			public void test1() {
+			@SuppressWarnings("exports")
+			public void test1(
+					@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
+
 				assertThrows(IllegalArgumentException.class, () -> {
 					new RegistryCommandHandlerProvider(config ->
 						// Null.
-						config.registerCommandHandler(null, () -> new TestCommandHandler()));
+						config.registerCommandHandler(null, () -> stubHandler));
 				});
 			}
 			
@@ -60,13 +62,16 @@ public class RegistryCommandHandlerProviderTests {
 			
 			@Test
 			@DisplayName("should throw when command is registered twice")
-			public void test3() {
+			@SuppressWarnings("exports")
+			public void test3(
+					@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler1,
+					@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler2) {
+
 				assertThrows(DuplicateCommandHandlerRegistrationException.class, () -> {
-					@SuppressWarnings("unused")
-					var provider = new RegistryCommandHandlerProvider(config ->
+					new RegistryCommandHandlerProvider(config ->
 						// Register the same command twice.
-						config.registerCommandHandler(TestCommand.class, () -> new TestCommandHandler())
-							.registerCommandHandler(TestCommand.class, () -> new TestCommandHandler())
+						config.registerCommandHandler(TestCommand.class, () -> stubHandler1)
+							.registerCommandHandler(TestCommand.class, () -> stubHandler2)
 					);
 				});
 			}
@@ -77,18 +82,20 @@ public class RegistryCommandHandlerProviderTests {
 	public class GetCommandHandlerForMethod {
 		@Test
 		@DisplayName("should provide registered command handler")
-		public void test1(@Mock CommandHandler<TestCommand> mockHandler) {
+		@SuppressWarnings("exports")
+		public void test1(
+				@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
 			
 			var provider = new RegistryCommandHandlerProvider(config ->
-				config.registerCommandHandler(TestCommand.class, () -> mockHandler));
+				config.registerCommandHandler(TestCommand.class, () -> stubHandler));
 			
 			Optional<CommandHandler<TestCommand>> resolvedHandler = 
 				provider.getCommandHandlerFor(TestCommand.class);			
 			
-			CommandHandler<TestCommand> instance = resolvedHandler.get();
+			CommandHandler<TestCommand> resolvedHandlerInstance = resolvedHandler.get();
 			
-			assertNotNull(instance);
-			assertSame(mockHandler, instance);
+			assertNotNull(resolvedHandlerInstance);
+			assertSame(stubHandler, resolvedHandlerInstance);
 		}
 
 		@Test
@@ -103,11 +110,13 @@ public class RegistryCommandHandlerProviderTests {
 		
 		@Test
 		@DisplayName("should throw when command type argument is null")
-		public void test3() {
+		@SuppressWarnings("exports")
+		public void test3(
+				@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
+			
 			assertThrows(IllegalArgumentException.class, () -> {
-				CommandHandler<TestCommand> testCommandHandler = new TestCommandHandler();
 				var provider = new RegistryCommandHandlerProvider(config ->
-					config.registerCommandHandler(TestCommand.class, () -> testCommandHandler));
+					config.registerCommandHandler(TestCommand.class, () -> stubHandler));
 					
 				provider.getCommandHandlerFor(null);
 			});

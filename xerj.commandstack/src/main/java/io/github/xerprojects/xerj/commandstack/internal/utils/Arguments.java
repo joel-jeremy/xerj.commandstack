@@ -50,6 +50,9 @@ public class Arguments {
      * @return The non-null argument.
      */
     public static <T> T require(T arg, Predicate<T> throwCondition, String message) {
+
+        requireNonNull(throwCondition, "throwCondition");
+
         if (throwCondition.test(arg)) {
             throw new IllegalArgumentException(message);
         }

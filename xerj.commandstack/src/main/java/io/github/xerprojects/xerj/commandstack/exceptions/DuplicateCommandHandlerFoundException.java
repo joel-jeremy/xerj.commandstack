@@ -24,7 +24,8 @@ package io.github.xerprojects.xerj.commandstack.exceptions;
 public class DuplicateCommandHandlerFoundException extends CommandStackException {
 
 	private static final long serialVersionUID = 1L;
-	private static final String DEFAULT_EXCEPTION_MESSAGE = "A duplicate command handler was registered for %s.";
+	private static final String DEFAULT_EXCEPTION_MESSAGE = 
+		"A duplicate command handler was registered for %s.";
 	
 	/**
 	 * The command type associated with this exception.
@@ -37,7 +38,8 @@ public class DuplicateCommandHandlerFoundException extends CommandStackException
 	 * @param message The exception message.
 	 * @param cause The cause of the exception.
 	 */
-	public DuplicateCommandHandlerFoundException(Class<?> commandType, String message, Throwable cause) {
+	public DuplicateCommandHandlerFoundException(
+			Class<?> commandType, String message, Throwable cause) {
 		super(buildExceptionMessage(commandType, message), cause);
 		this.commandType = commandType;
 	}
@@ -78,7 +80,7 @@ public class DuplicateCommandHandlerFoundException extends CommandStackException
 	
 	private static final String buildExceptionMessage(Class<?> commandType, String message) {
 
-		if (message == null || message.isBlank()) {
+		if (message == null || message.isEmpty()) {
 			message = String.format(DEFAULT_EXCEPTION_MESSAGE, commandType);
 		}
 		

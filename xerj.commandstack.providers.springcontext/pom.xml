@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.github.xerprojects</groupId>
+    <artifactId>xerj.commandstack.parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <groupId>io.github.xerprojects</groupId>
+  <artifactId>xerj.commandstack.providers.springcontext</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <name>xerj.commandstack.providers.springcontext</name>
+  <description>XerJ Command Stack's CommandHandlerProvider implementation that utilizes Spring Context.</description>
+  <url>https://github.com/XerProjects/xerj.commandstack</url>
+  
+  <dependencies>
+    <dependency>
+      <groupId>io.github.xerprojects</groupId>
+      <artifactId>xerj.commandstack</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>5.3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- Required for spring test to be able to access modules -->
+          <argLine>
+            @{surefire.jacoco.args}
+            --add-exports io.github.xerprojects.xerj.commandstack.providers.springcontext/io.github.xerprojects.xerj.commandstack.providers.springcontext.testentities=spring.beans
+            --add-exports io.github.xerprojects.xerj.commandstack.providers.springcontext/io.github.xerprojects.xerj.commandstack.providers.springcontext.testentities.springconfigs=spring.beans,spring.context
+            --add-exports io.github.xerprojects.xerj.commandstack.providers.springcontext/io.github.xerprojects.xerj.commandstack.providers.springcontext.testentities.other=spring.beans
+            --add-opens io.github.xerprojects.xerj.commandstack.providers.springcontext/io.github.xerprojects.xerj.commandstack.providers.springcontext.testentities.springconfigs=spring.core
+          </argLine>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <repositories>
+        <repository>
+          <id>ossrh</id>
+          <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+</project>

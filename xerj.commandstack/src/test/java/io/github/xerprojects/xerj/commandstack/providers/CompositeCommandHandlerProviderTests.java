@@ -17,8 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
 import io.github.xerprojects.xerj.commandstack.exceptions.DuplicateCommandHandlerFoundException;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class CompositeCommandHandlerProviderTests {
@@ -45,36 +45,38 @@ public class CompositeCommandHandlerProviderTests {
 	public class GetCommandHandlerForMethod {
 		@Test
 		@DisplayName("should provide registered command handler")
+		@SuppressWarnings("exports")
 		public void test1(
 				@Mock CommandHandlerProvider mockProvider,
-				@Mock CommandHandler<TestCommand> mockHandler) {
+				@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
 
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
-				.thenReturn(Optional.of(mockHandler));
+				.thenReturn(Optional.of(stubHandler));
                 
             var compositeProvider = new CompositeCommandHandlerProvider(List.of(mockProvider));
 			
 			Optional<CommandHandler<TestCommand>> resolvedHandler = 
 				compositeProvider.getCommandHandlerFor(TestCommand.class);			
 			
-			CommandHandler<TestCommand> handlerInstance = resolvedHandler.get();
+			CommandHandler<TestCommand> resolvedHandlerInstance = resolvedHandler.get();
 			
-			assertNotNull(handlerInstance);
-			assertSame(mockHandler, handlerInstance);
+			assertNotNull(resolvedHandlerInstance);
+			assertSame(stubHandler, resolvedHandlerInstance);
         }
         
         @Test
 		@DisplayName("should throw when command handler is in multiple providers")
+		@SuppressWarnings("exports")
 		public void test2(
 				@Mock CommandHandlerProvider mockProvider1,
 				@Mock CommandHandlerProvider mockProvider2,
-				@Mock CommandHandler<TestCommand> mockHandler) {
+				@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
 
 			when(mockProvider1.getCommandHandlerFor(TestCommand.class))
-				.thenReturn(Optional.of(mockHandler));
+				.thenReturn(Optional.of(stubHandler));
 
 			when(mockProvider2.getCommandHandlerFor(TestCommand.class))
-				.thenReturn(Optional.of(mockHandler));
+				.thenReturn(Optional.of(stubHandler));
             
             assertThrows(DuplicateCommandHandlerFoundException.class, () -> {
                 var compositeProvider = new CompositeCommandHandlerProvider(
@@ -87,7 +89,6 @@ public class CompositeCommandHandlerProviderTests {
 		@Test
 		@DisplayName("should propagate exceptions from providers")
 		public void test3(@Mock CommandHandlerProvider mockProvider) {
-
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
 				.thenThrow(RuntimeException.class);
 			
@@ -101,7 +102,8 @@ public class CompositeCommandHandlerProviderTests {
 		@DisplayName("should throw when command type argument is null")
 		public void test4(@Mock CommandHandlerProvider mockProvider) {
 			assertThrows(IllegalArgumentException.class, () -> {
-				var compositeProvider = new CompositeCommandHandlerProvider(List.of(mockProvider));
+				var compositeProvider = new CompositeCommandHandlerProvider(
+					List.of(mockProvider));
 				compositeProvider.getCommandHandlerFor(null);
 			});
 		}

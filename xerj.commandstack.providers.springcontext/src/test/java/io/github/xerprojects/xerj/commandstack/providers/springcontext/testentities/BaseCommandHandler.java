@@ -1,6 +1,8 @@
-package io.github.xerprojects.xerj.commandstack;
+package io.github.xerprojects.xerj.commandstack.providers.springcontext.testentities;
 
 import java.util.ArrayList;
+
+import io.github.xerprojects.xerj.commandstack.CommandHandler;
 
 public abstract class BaseCommandHandler<TCommand> implements CommandHandler<TCommand> {
 	private ArrayList<TCommand> handledCommands = new ArrayList<>();

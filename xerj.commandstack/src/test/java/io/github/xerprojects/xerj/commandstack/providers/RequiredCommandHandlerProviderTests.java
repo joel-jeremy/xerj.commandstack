@@ -16,8 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
 import io.github.xerprojects.xerj.commandstack.CommandHandlerProvider;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandHandlerNotFoundException;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class RequiredCommandHandlerProviderTests {
@@ -36,22 +36,23 @@ public class RequiredCommandHandlerProviderTests {
 	public class GetCommandHandlerForMethod {
 		@Test
 		@DisplayName("should provide registered command handler")
+		@SuppressWarnings("exports")
 		public void test1(
 				@Mock CommandHandlerProvider mockProvider,
-				@Mock CommandHandler<TestCommand> mockHandler) {
+				@Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
 
 			when(mockProvider.getCommandHandlerFor(TestCommand.class))
-				.thenReturn(Optional.of(mockHandler));
+				.thenReturn(Optional.of(stubHandler));
                 
             var requiredProvider = new RequiredCommandHandlerProvider(mockProvider);
 			
 			Optional<CommandHandler<TestCommand>> resolvedHandler = 
 				requiredProvider.getCommandHandlerFor(TestCommand.class);			
 			
-			CommandHandler<TestCommand> handlerInstance = resolvedHandler.get();
+			CommandHandler<TestCommand> resolvedHandlerInstance = resolvedHandler.get();
 			
-			assertNotNull(handlerInstance);
-			assertSame(mockHandler, handlerInstance);
+			assertNotNull(resolvedHandlerInstance);
+			assertSame(stubHandler, resolvedHandlerInstance);
         }
         
         @Test
@@ -69,9 +70,11 @@ public class RequiredCommandHandlerProviderTests {
 
 		@Test
 		@DisplayName("should throw when command type argument is null")
-		public void test3(@Mock CommandHandlerProvider mockProvider) {
+		public void test3(
+				@Mock(stubOnly = true) CommandHandlerProvider stubProvider) {
+			
 			assertThrows(IllegalArgumentException.class, () -> {
-				var requiredProvider = new RequiredCommandHandlerProvider(mockProvider);
+				var requiredProvider = new RequiredCommandHandlerProvider(stubProvider);
 				requiredProvider.getCommandHandlerFor(null);
 			});
 		}

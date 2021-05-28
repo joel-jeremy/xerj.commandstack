@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.xerprojects.xerj.commandstack.CommandHandler;
-import io.github.xerprojects.xerj.commandstack.TestCommand;
 import io.github.xerprojects.xerj.commandstack.exceptions.CommandStackException;
+import io.github.xerprojects.xerj.commandstack.testentities.TestCommand;
 
 @ExtendWith(MockitoExtension.class)
 public class RegisteredCommandHandlerTests {
@@ -24,7 +24,9 @@ public class RegisteredCommandHandlerTests {
     public class Constructor {
         @Test
         @DisplayName("should throw if commandType argument is null")
-        public void test1(@Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
+        @SuppressWarnings("exports")
+        public void test1(
+                @Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
             assertThrows(IllegalArgumentException.class, () -> {
                 new RegisteredCommandHandler<>(null, mockInstanceFactory);
             });
@@ -43,7 +45,10 @@ public class RegisteredCommandHandlerTests {
     public class GetCommandTypeMethod {
         @Test
         @DisplayName("should return correct comand type")
-        public void test1(@Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
+        @SuppressWarnings("exports")
+        public void test1(
+                @Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
+                    
             var registerCommandHandler = new RegisteredCommandHandler<TestCommand>(
                 TestCommand.class, mockInstanceFactory);
 
@@ -55,10 +60,12 @@ public class RegisteredCommandHandlerTests {
     public class GetInstanceMethod {
         @Test
         @DisplayName("should return command handler instance")
-        public void test1(@Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory,
-                @Mock CommandHandler<TestCommand> mockCommandHandler) {
+        @SuppressWarnings("exports")
+        public void test1(
+                @Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory,
+                @Mock(stubOnly = true) CommandHandler<TestCommand> stubHandler) {
 
-            when(mockInstanceFactory.get()).thenReturn(mockCommandHandler);
+            when(mockInstanceFactory.get()).thenReturn(stubHandler);
 
             var registerCommandHandler = new RegisteredCommandHandler<TestCommand>(
                 TestCommand.class, mockInstanceFactory);
@@ -68,12 +75,14 @@ public class RegisteredCommandHandlerTests {
             // verify instance came from factory.
             verify(mockInstanceFactory).get();
 
-            assertEquals(mockCommandHandler, resolvedCommandHandler);
+            assertEquals(stubHandler, resolvedCommandHandler);
         }
 
         @Test
         @DisplayName("should throw if command handler instance factory returns null")
-        public void test2(@Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
+        @SuppressWarnings("exports")
+        public void test2(
+                @Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory) {
 
             when(mockInstanceFactory.get()).thenReturn(null);
 
@@ -87,17 +96,19 @@ public class RegisteredCommandHandlerTests {
 
         @Test
         @DisplayName("should wrap exception if command handler instance factory throws an exception")
-        public void test3(@Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory,
-                @Mock RuntimeException mockException) {
+        @SuppressWarnings("exports")
+        public void test3(
+                @Mock Supplier<CommandHandler<TestCommand>> mockInstanceFactory,
+                @Mock(stubOnly = true) RuntimeException mockException) {
 
             when(mockInstanceFactory.get()).thenThrow(mockException);
 
-            var registerCommandHandler = new RegisteredCommandHandler<TestCommand>(
+            var registeredCommandHandler = new RegisteredCommandHandler<TestCommand>(
                 TestCommand.class, mockInstanceFactory);
                 
             CommandStackException exception = 
                 assertThrows(CommandStackException.class, () -> {
-                    registerCommandHandler.getInstance();
+                    registeredCommandHandler.getInstance();
                 });
 
             // CommandStackException should wrap the original exception.

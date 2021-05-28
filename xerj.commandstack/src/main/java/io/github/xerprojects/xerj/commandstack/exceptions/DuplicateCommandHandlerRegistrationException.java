@@ -25,7 +25,8 @@ package io.github.xerprojects.xerj.commandstack.exceptions;
 public class DuplicateCommandHandlerRegistrationException extends CommandStackException {
 
 	private static final long serialVersionUID = 1L;
-	private static final String DEFAULT_EXCEPTION_MESSAGE = "Attempting to register duplicate command handlers for %s.";
+	private static final String DEFAULT_EXCEPTION_MESSAGE = 
+		"Attempting to register duplicate command handlers for %s.";
 	
 	/**
 	 * The command type associated with this exception.
@@ -38,7 +39,8 @@ public class DuplicateCommandHandlerRegistrationException extends CommandStackEx
 	 * @param message The exception message.
 	 * @param cause The cause of the exception.
 	 */
-	public DuplicateCommandHandlerRegistrationException(Class<?> commandType, String message, Throwable cause) {
+	public DuplicateCommandHandlerRegistrationException(
+			Class<?> commandType, String message, Throwable cause) {
 		super(buildExceptionMessage(commandType, message), cause);
 		this.commandType = commandType;
 	}
@@ -48,7 +50,8 @@ public class DuplicateCommandHandlerRegistrationException extends CommandStackEx
 	 * @param commandType The command type.
 	 * @param message The exception message.
 	 */
-	public DuplicateCommandHandlerRegistrationException(Class<?> commandType, String message) {
+	public DuplicateCommandHandlerRegistrationException(
+			Class<?> commandType, String message) {
 		this(commandType, message, null);
 	}
 
@@ -57,7 +60,8 @@ public class DuplicateCommandHandlerRegistrationException extends CommandStackEx
 	 * @param commandType The command type.
 	 * @param cause The cause of the exception.
 	 */
-	public DuplicateCommandHandlerRegistrationException(Class<?> commandType, Throwable cause) {
+	public DuplicateCommandHandlerRegistrationException(
+			Class<?> commandType, Throwable cause) {
 		this(commandType, null, cause);
 	}
 
@@ -79,7 +83,7 @@ public class DuplicateCommandHandlerRegistrationException extends CommandStackEx
 	
 	private static final String buildExceptionMessage(Class<?> commandType, String message) {
 
-		if (message == null || message.isBlank()) {
+		if (message == null || message.isEmpty()) {
 			message = String.format(DEFAULT_EXCEPTION_MESSAGE, commandType);
 		}
 		
